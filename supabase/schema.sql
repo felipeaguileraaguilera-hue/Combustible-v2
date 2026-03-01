@@ -1,0 +1,21 @@
+-- ═══════════════════════════════════════════════════════════════
+-- COMBUSTIBLE — SCHEMA (Ecosistema Unificado)
+-- ═══════════════════════════════════════════════════════════════
+--
+-- Este módulo usa las tablas: staff, fuel_entries, fuel_exits
+-- que se crean mediante el script de migración:
+--   → migration-consolidation.sql
+--
+-- Ejecutar AQUEL script en la instancia principal:
+--   https://ylbwewlvovyfxoerhrnf.supabase.co
+--
+-- Este archivo existe solo como referencia de las tablas
+-- que utiliza esta aplicación.
+--
+-- ═══════════════════════════════════════════════════════════════
+
+-- Ver migration-consolidation.sql para el schema completo.
+-- Tablas utilizadas:
+--   • staff (personal interno: admin, operario, repartidor)
+--   • fuel_entries (abastecimiento de depósitos)
+--   • fuel_exits (repostajes/salidas)
