@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Card, Input, Select, Button, EmptyState } from '../components/UI'
-import { IconPlus, IconTruck } from '../components/Icons'
-import { createEntry, getEntries } from '../lib/database'
+import { Card, Input, Select, Button, EmptyState, ConfirmDialog } from '../components/UI'
+import { IconPlus, IconTruck, IconTrash } from '../components/Icons'
+import { createEntry, getEntries, deleteEntry } from '../lib/database'
 import { todayLocal, formatDate, formatVolume, formatCurrency, isFutureDate } from '../lib/utils'
 
 export default function EntradasPage({ user, showToast }) {
@@ -15,10 +15,11 @@ export default function EntradasPage({ user, showToast }) {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [entries, setEntries] = useState([])
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   const loadEntries = async () => {
     try {
-      const { data } = await getEntries({ limit: 10 })
+      const { data } = await getEntries({ limit: 20 })
       setEntries(data || [])
     } catch (err) {
       console.error(err)
@@ -52,6 +53,17 @@ export default function EntradasPage({ user, showToast }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteEntry(id)
+      showToast('Entrada eliminada', 'info')
+      loadEntries()
+    } catch (err) {
+      showToast(err.message || 'Error al eliminar', 'error')
+    }
+    setConfirmDelete(null)
   }
 
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value })
@@ -101,14 +113,30 @@ export default function EntradasPage({ user, showToast }) {
                     {formatDate(en.date)} · {en.product} · {formatCurrency(en.price_per_liter)}€/L
                   </div>
                 </div>
-                <div className="text-base font-bold text-olive-400 font-mono">
-                  +{formatVolume(en.volume)}L
+                <div className="flex items-center gap-3">
+                  <div className="text-base font-bold text-olive-400 font-mono">
+                    +{formatVolume(en.volume)}L
+                  </div>
+                  <button
+                    onClick={() => setConfirmDelete(en)}
+                    className="text-gray-600 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer p-1"
+                  >
+                    <IconTrash size={14} />
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </Card>
       )}
+
+      <ConfirmDialog
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={() => handleDelete(confirmDelete.id)}
+        title="Eliminar entrada"
+        message={`¿Eliminar la entrada de ${confirmDelete?.volume}L de ${confirmDelete?.supplier}? Esto afectará al stock calculado.`}
+      />
     </div>
   )
 }

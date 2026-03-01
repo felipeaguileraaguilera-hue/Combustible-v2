@@ -20,7 +20,11 @@ export default function App() {
     // Obtener sesión actual
     getCurrentSession()
       .then((s) => setSession(s))
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err)
+        // Si falla la recuperación de sesión, limpiar y mostrar login
+        logout().catch(() => {})
+      })
       .finally(() => setLoading(false))
 
     // Escuchar cambios de autenticación

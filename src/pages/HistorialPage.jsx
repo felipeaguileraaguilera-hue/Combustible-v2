@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Card, Badge, EmptyState, Spinner } from '../components/UI'
-import { getExits } from '../lib/database'
+import { Card, Badge, EmptyState, Spinner, ConfirmDialog } from '../components/UI'
+import { IconTrash } from '../components/Icons'
+import { getExits, deleteExit } from '../lib/database'
 import { formatDateTime, formatVolume } from '../lib/utils'
 
-export default function HistorialPage({ user, isAdmin }) {
+export default function HistorialPage({ user, isAdmin, showToast }) {
   const [exits, setExits] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [productFilter, setProductFilter] = useState('all')
-  const [total, setTotal] = useState(0)
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -20,9 +21,8 @@ export default function HistorialPage({ user, isAdmin }) {
       }
       if (!isAdmin) params.staffId = user.id
 
-      const { data, count } = await getExits(params)
+      const { data } = await getExits(params)
       setExits(data || [])
-      setTotal(count || 0)
     } catch (err) {
       console.error(err)
     } finally {
@@ -31,6 +31,17 @@ export default function HistorialPage({ user, isAdmin }) {
   }, [filter, productFilter, isAdmin, user.id])
 
   useEffect(() => { loadData() }, [loadData])
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteExit(id)
+      showToast('Salida eliminada', 'info')
+      loadData()
+    } catch (err) {
+      showToast(err.message || 'Error al eliminar', 'error')
+    }
+    setConfirmDelete(null)
+  }
 
   const totalVolume = exits.reduce((s, e) => s + parseFloat(e.volume), 0)
 
@@ -120,14 +131,32 @@ export default function HistorialPage({ user, isAdmin }) {
                     {ex.plate && <Badge color="gray">{ex.plate}</Badge>}
                   </div>
                 </div>
-                <div className="text-lg font-bold text-red-400 font-mono">
-                  {ex.volume}L
+                <div className="flex items-center gap-2">
+                  <div className="text-lg font-bold text-red-400 font-mono">
+                    {ex.volume}L
+                  </div>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setConfirmDelete(ex)}
+                      className="text-gray-600 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer p-1"
+                    >
+                      <IconTrash size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
             </Card>
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={() => handleDelete(confirmDelete.id)}
+        title="Eliminar salida"
+        message={`¿Eliminar la salida de ${confirmDelete?.volume}L de ${confirmDelete?.staff_name}? Esto afectará al stock calculado.`}
+      />
     </div>
   )
 }

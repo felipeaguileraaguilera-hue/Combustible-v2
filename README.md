@@ -1,43 +1,28 @@
 # ⛽ Combustible — Aceites Tapia SL
 
-Sistema de control de gasóleo para la gestión de depósitos de combustible.
+Control de gasóleo para vehículos y equipos de la empresa.
 
-**Stack:** React 18 + Vite + Tailwind CSS + Supabase
+## Stack
+- **Frontend:** React 18 + Vite + Tailwind CSS
+- **Backend:** Supabase (instancia compartida del ecosistema)
+- **Deploy:** Vercel
 
----
+## Instancia Supabase
+Comparte la instancia `ylbwewlvovyfxoerhrnf` con el resto de apps del ecosistema (Tarifas, Pedidos, Repartidor).
 
-## 🚀 Despliegue
-
-Consulta la **Guía de Despliegue** (documento Word incluido) para instrucciones detalladas paso a paso, sin necesidad de usar terminal.
-
-**Resumen rápido de los 6 pasos:**
-
-1. Crear proyecto en [Supabase](https://supabase.com) (gratis)
-2. Pegar `supabase/schema.sql` en el SQL Editor de Supabase → Run
-3. Desactivar "Confirm email" en Authentication → Providers → Email
-4. Anotar Project URL y anon key desde Settings → API
-5. Subir este repositorio a GitHub, configurar secretos y activar Pages
-6. Crear usuario admin en Authentication → Add User
-
----
-
-## 📁 Estructura
-
+## Variables de entorno
 ```
-├── src/
-│   ├── components/     → AppLayout, UI, Icons
-│   ├── lib/            → auth, database, supabase, utils
-│   ├── pages/          → Login, Dashboard, Entradas, Salidas, Usuarios, Historial
-│   └── styles/         → CSS global + Tailwind
-├── supabase/
-│   ├── schema.sql      → Tablas, RLS, triggers (copiar y pegar en Supabase)
-│   └── seed.sql        → Datos iniciales del admin
-├── .github/workflows/  → Despliegue automático a GitHub Pages
-└── public/             → PWA manifest e icono
+VITE_SUPABASE_URL=https://ylbwewlvovyfxoerhrnf.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon key>
 ```
 
----
+## Desarrollo local
+```bash
+npm install
+npm run dev
+```
 
-## 📱 Instalación en móvil
-
-Abre la URL en Chrome/Safari → menú → "Añadir a pantalla de inicio"
+## Tablas utilizadas
+- `staff` — Personal interno (admin, operario, repartidor)
+- `fuel_entries` — Abastecimiento de depósitos
+- `fuel_exits` — Repostajes / salidas

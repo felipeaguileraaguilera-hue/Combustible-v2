@@ -40,7 +40,7 @@ export default function AppLayout({ user, onLogout }) {
       case 'usuarios':
         return isAdmin ? <UsuariosPage showToast={showToast} /> : null
       case 'historial':
-        return <HistorialPage user={user} isAdmin={isAdmin} />
+        return <HistorialPage user={user} isAdmin={isAdmin} showToast={showToast} />
       default:
         return <SalidasPage user={user} showToast={showToast} />
     }

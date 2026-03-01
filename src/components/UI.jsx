@@ -142,11 +142,11 @@ export function Modal({ open, onClose, title, children }) {
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center bg-black/60"
       onClick={onClose}
     >
       <div
-        className="bg-surface border border-dark-border rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto animate-slide-up"
+        className="bg-surface border border-dark-border rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-5">
